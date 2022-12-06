@@ -1,5 +1,47 @@
-.divTable{
-  margin-left: 200px;
-  margin-right: 200px;
-  margin-top: 100px;
+/* .divTable{
+  margin: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center
+} */
+
+.table-image td, .table-image th {
+  vertical-align: middle;
+}
+.container {
+  padding: 2rem 0rem;
+}
+
+.paginationDiv{
+  height: 10em;
+  display: flex;
+  align-items: center;
+  justify-content: center
+} 
+.pagination{
+  margin: 0
+} 
+
+.divHeader{
+  height: 5em;
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+.search{
+  float: right;
+  margin-right: 20px;
+}
+
+
+.imgData{
+  object-fit:cover;
+}
+
+.th{
+  text-transform: capitalize;
+}
+
+.add{
+  margin-left: 20px;
 }
