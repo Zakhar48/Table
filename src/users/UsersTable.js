@@ -192,6 +192,7 @@ let SearchData = currentCountry.filter((search) =>
     })
 }
 
+
     const arr = () => {
         return (SearchData.map((dataI, index) => {
                 
@@ -203,7 +204,7 @@ let SearchData = currentCountry.filter((search) =>
                             <>
                                 {
                                     tableHeaders.map((v)=>{
-                                        return <td>{dataI[v]}</td>
+                                        return <td key={v}>{dataI[v]}</td>
                                     })
                                 }
                                        
