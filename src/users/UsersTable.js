@@ -5,6 +5,7 @@ import Modal from "../modal/modal";
 import Pagination from "./Pagination";
 import { toast } from 'react-toastify';
 import Table from 'react-bootstrap/Table'
+import { Dropdown } from "bootstrap";
 
 const tableHeaders = ['id','title', 'brand']
 
@@ -13,10 +14,11 @@ export default function Get() {
     const [data, setData] = useState([]);
     const [modalActive, setModalActive] = useState(false)
     const [idModal, setIdModal] = useState('')
-    const [dataPage, setDataPage] = useState(1)
-    const countData = 8
+    // const [dataPage, setDataPage] = useState(1)
+    const [limit,setLimita] = useState(0)
     const [query, setQuery] = useState('')
-   
+    const [pageLimit, setPageLimit] = useState(10)
+    const [skip, setSkip] = useState(0)
     const [newData, setNewData] = useState(null)
 
     const [addData, setAddData] = useState(null)
@@ -26,24 +28,31 @@ export default function Get() {
     useEffect(() => {
 
         getProducts()
-    }, []);
+        
+    }, [pageLimit,skip]);
 
     const getProducts = async () => {
         try {
-            let data = await axios.get('https://dummyjson.com/products')
-
-            setData(data.data.products)
+            let data = await axios.get(`https://dummyjson.com/products?limit=${+pageLimit}&skip=${skip}`)
+            console.log(data)
+            if(data.data.products.length != 0 ){
+                setData(data.data.products)
+                
+            }
+            setLimita(data.data.limit)
+            
+            
 
         } catch (e) {
             console.log(e)
         }
     }
 
-    const lastCountryIndex = dataPage * countData
-    const firstCountryIndex = lastCountryIndex - countData
-    const currentCountry = data.slice(firstCountryIndex, lastCountryIndex)
+    // const lastCountryIndex = dataPage * countData
+    // const firstCountryIndex = lastCountryIndex - countData
+    // const currentCountry = data.slice(firstCountryIndex, lastCountryIndex)
 
-    const paginate = pogeNumber => setDataPage(pogeNumber)
+    // const paginate = pogeNumber => setDataPage(pogeNumber)
 
     async function deletePost(id) {
         try {
@@ -88,7 +97,7 @@ export default function Get() {
                     progress: undefined,
                     theme: "dark",
                     });
-                console.log('kpav',add)
+            
                 setData([
                     ...data,
                     {
@@ -145,11 +154,11 @@ export default function Get() {
     }
 
 
-    function editTable(id) {
-        console.log('sdfdsf', id)
+    function editTable(id, status) {
+     
         setData(data.map(e => {
             if(e.id == id){
-              e.isEdit = true
+              e.isEdit = status
               
             }
             return e
@@ -162,7 +171,7 @@ export default function Get() {
     const handleChange = (e) => {
 
         const { name, value } = e.target;
-        console.log(value)
+      
         setNewData((prev) => {
             return { ...prev, [name]: value }
         })
@@ -182,65 +191,72 @@ export default function Get() {
 //    search.brand.toLowerCase().includes(query)
 
 //    ))
-let SearchData = currentCountry.filter((search) =>
+let SearchData = data.filter((search) =>
     search.brand.toLowerCase().includes(query))
     
-   const ThData =()=>{
+    const ThData = ()=> {
+       
+            return tableHeaders.map((data) => {
+                return <th className="th" key={data}>{data}</th>
+            })
+        
+    }
     
-    return tableHeaders.map((data)=>{
-        return <th className="th" key={data}>{data}</th>
-    })
-}
 
 
-    const arr = () => {
-        return (SearchData.map((dataI, index) => {
+    const Arr = () => {
+        
+            return (SearchData.map((dataI, index) => {
                 
 
-                    return (
-                        <tr key={dataI.id}>
-                            { 
-                            dataI.isEdit != true ?
-                            <>
-                                {
-                                    tableHeaders.map((v)=>{
-                                        return <td key={v}>{dataI[v]}</td>
-                                    })
-                                }
-                                       
-                                 <td>   
-                                    
-                                    <button onClick={() => {
-                                        navigate(`/body/${dataI.id}`)
-                                    }} className="btn"><i className="bi bi-eye"></i></button>
-                                    <button onClick={() => editTable(dataI.id)} className="btn"><i className="bi bi-pencil-square"></i></button>
-                                    <button onClick={() => {
-                                        setIdModal(dataI.id)
-                                        setModalActive(true)
-                                    }} className="btn"><i className="bi bi-trash3"></i></button>
-                                </td>
-                                </> 
-                                :
-                                <>
-                                    <td>{dataI.id}</td>
-                                    <td>
-                                        {/* <img src={dataI.thumbnail} style={{ width: 55, height: 55 }} /> */}
-                                        <input defaultValue={dataI.title} type='text' name='title' onChange={handleChange} />
-                                    </td>
-                                    <td>
-                                        <input defaultValue={dataI.brand} onChange={handleChange} type='text' name='brand' />
-                                    </td>           
-                                    <td>
-                                        <button onClick={()=>{editPost(dataI.id)}} type="submit"><i className="bi bi-check2"></i></button>
-                                    </td>
-                                </>
+                return (
+                    <tr key={dataI.id}>
+                        { 
+                        dataI.isEdit != true ?
+                        <>
+                            {
+                                tableHeaders.map((v)=>{
+                                    return <td key={v}>{dataI[v]}</td>
+                                })
                             }
-                        </tr>
-                    )
-            })
-        )
+                                   
+                             <td>   
+                                
+                                <button onClick={() => {
+                                    navigate(`/body/${dataI.id}`)
+                                }} className="btn"><i className="bi bi-eye"></i></button>
+                                <button onClick={() => editTable(dataI.id, true)} className="btn"><i className="bi bi-pencil-square"></i></button>
+                                <button onClick={() => {
+                                    setIdModal(dataI.id)
+                                    setModalActive(true)
+                                }} className="btn"><i className="bi bi-trash3"></i></button>
+                            </td>
+                            </> 
+                            :
+                            <>
+                                <td>{dataI.id}</td>
+                                <td>
+                                    {/* <img src={dataI.thumbnail} style={{ width: 55, height: 55 }} /> */}
+                                    <input defaultValue={dataI.title} type='text' name='title' onChange={handleChange} />
+                                </td>
+                                <td>
+                                    <input defaultValue={dataI.brand} onChange={handleChange} type='text' name='brand' />
+                                </td>           
+                                <td>
+                                    <button className="btn" onClick={()=>{editPost(dataI.id)}} type="submit"><i className="bi bi-check2"></i></button>
+                                    <button className="btn" onClick={()=> editTable(dataI.id, false)}><i className="bi bi-x-lg"></i></button>
+                                </td>
+                            </>
+                        }
+                    </tr>
+                )
+        })
+    )
+        
+       
     }
-
+    
+        
 
     
     return (
@@ -253,12 +269,14 @@ let SearchData = currentCountry.filter((search) =>
                 <input type='text' placeholder="Brand" name='brand' onChange={addChange} />
                 <button type="button" onClick={addPost} className="btn btn-primary">Add Post</button> 
             </div>
-            
+            <input type='text'  onChange={e => setTimeout(()=>{
+                setPageLimit(e.target.value)
+            },2000) }/>
             <input type='text' placeholder="Search..." className="search" onChange={e => setQuery(e.target.value)} />
             <div className="container">
                 <div className="row">
                     <div className="col-12">
-                    <Table stripped bordered hover size="xs">
+                    <Table bordered hover size="xs">
 
                             <thead>
                                 <tr>
@@ -268,12 +286,13 @@ let SearchData = currentCountry.filter((search) =>
                                 </tr>
                             </thead>
                             <tbody>
-                                  {arr()}  
+                                  {Arr()}  
                             </tbody>
                         </Table>
                     </div>
                 </div>
             </div>
+            
             <Modal
               modalActive={modalActive}
               setModalActive={() => setModalActive(false)}
@@ -281,9 +300,14 @@ let SearchData = currentCountry.filter((search) =>
               data={data} id={idModal}
             />
             <Pagination
-                countData={countData}
+                // countData={countData}
+                setPageLimit={setPageLimit}
+                setSkip={setSkip}
+                limit={limit}
+                skip={skip}
+                pageLimit={+pageLimit}
                 totalCountries={data.length}
-                paginate={paginate}
+                // paginate={paginate}
             />
         </>
     )

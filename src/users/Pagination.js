@@ -1,26 +1,28 @@
 import React from "react";
 
 
-const Pagination = ({ countData,totalCountries,paginate }) => {
-    const pageNumbers = []
+const Pagination = ({ pageLimit, skip, setSkip, limit }) => {
 
-    for(let i = 1; i <= Math.ceil(totalCountries / countData);i++){
-        pageNumbers.push(i)
-    }
     return (
         <div className="paginationDiv">
-            <ul className="pagination">
-                {    
-                    pageNumbers.map(number => (
-                        <li className="page-item" key={number}>
-                            <a href="#" className="page-link" onClick={()=> paginate(number)}>
-                                {number}
-                            </a>
-                        </li>
-                    ))
+
+            <button onClick={() => {
+
+                if (skip >= pageLimit) {
+                    setSkip(skip - pageLimit)
                 }
 
-            </ul>
+
+            }}>prev</button>
+            <button onClick={() => {
+                console.log(pageLimit)
+
+                if (limit >= 1) {
+                    setSkip(pageLimit + skip)
+                }
+
+
+            }}>next</button>
 
         </div>
     )
